@@ -35,7 +35,7 @@ class DonationFeeTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function testAmountCollectedIs180CentsForDonationOf200CentsAndCommissionOf10Percent()
+    public function testAmountCollectedIs130CentsForDonationOf200CentsAndCommissionOf10Percent()
     {
         //Given
         $donationFees = new DonationFee(200, 10);
@@ -44,7 +44,7 @@ class DonationFeeTest extends TestCase
         $perceivedAmount = $donationFees->getAmountCollected();
 
         //Then
-        $expected = 180;
+        $expected = 130;
         $this->assertEquals($expected, $perceivedAmount);
     }
 
@@ -125,7 +125,7 @@ class DonationFeeTest extends TestCase
         $this->expectException(Exception::class);
         $donationFees = new DonationFee($donation, 10);
     }
-    
+
     public function testDonationAmountEqualTo100ShouldntThrowAnException()
     {
         // Given
@@ -156,5 +156,18 @@ class DonationFeeTest extends TestCase
         } catch (Exception $e) {
             $this->fail("Exception thrown for donation greater than 100");
         }
+    }
+
+    public function testFixedAndCommissionFeeAmountIs60CentsForDonationOf100CentsAndCommissionOf10Percent()
+    {
+        // Etant donné une donation de 100 et commission de 10%
+        $donationFees = new DonationFee(100, 10);
+
+        // Lorsque qu'on appel la méthode getCommissionAmount()
+        $actual = $donationFees->getFixedAndCommissionFeeAmount();
+
+        // Alors la Valeur de la commission doit être de 10
+        $expected = 60;
+        $this->assertEquals($expected, $actual);
     }
 }

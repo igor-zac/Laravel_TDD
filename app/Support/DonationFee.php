@@ -7,6 +7,7 @@ use Exception;
 
 class DonationFee
 {
+    const FIXED_FEE = 50;
 
     private $donation;
     private $commissionPercentage;
@@ -27,8 +28,15 @@ class DonationFee
         return $this->donation * $this->commissionPercentage / 100;
     }
 
+    public function getFixedAndCommissionFeeAmount()
+    {
+        return $this->getCommissionAmount() + self::FIXED_FEE;
+    }
+
     public function getAmountCollected()
     {
-        return $this->donation - $this->getCommissionAmount();
+        return $this->donation - $this->getFixedAndCommissionFeeAmount();
     }
+
+
 }
