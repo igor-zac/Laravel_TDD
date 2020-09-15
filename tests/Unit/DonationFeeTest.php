@@ -193,4 +193,46 @@ class DonationFeeTest extends TestCase
         $this->assertLessThanOrEqual($expected, $actual2);
         $this->assertLessThanOrEqual($expected, $actual3);
     }
+
+    public function testGetSummaryReturnsArrayWithExpectedArrayKeys()
+    {
+        // Given
+        $donationFees = new DonationFee(100, 10);
+
+        // When
+        $summary = $donationFees->getSummary();
+
+        //Then
+        $this->assertIsArray($summary);
+
+        $this->assertContains("donation", array_keys($summary));
+        $this->assertContains("fixedFee", array_keys($summary));
+        $this->assertContains("commission", array_keys($summary));
+        $this->assertContains("fixedAndCommission", array_keys($summary));
+        $this->assertContains("amountCollected", array_keys($summary));
+    }
+
+    public function testGetSummaryReturnsExpectedSummaryAssociativeArray()
+    {
+        // Given
+        $donationFees = new DonationFee(100, 10);
+
+        // When
+        $summary = $donationFees->getSummary();
+
+        //Then
+        $this->assertCount(5, $summary);
+
+        $expectedDonation = 100;
+        $expectedFixedFee = 50;
+        $expectedCommission = 10;
+        $expectedFixedAndCommission = 60;
+        $expectedAmountCollected = 40;
+
+        $this->assertEquals($expectedDonation, $summary['donation']);
+        $this->assertEquals($expectedFixedFee, $summary['fixedFee']);
+        $this->assertEquals($expectedCommission, $summary['commission']);
+        $this->assertEquals($expectedFixedAndCommission, $summary['fixedAndCommission']);
+        $this->assertEquals($expectedAmountCollected, $summary['amountCollected']);
+    }
 }
