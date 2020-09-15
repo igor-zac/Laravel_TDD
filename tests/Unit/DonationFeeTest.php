@@ -68,7 +68,7 @@ class DonationFeeTest extends TestCase
             $donationFees = new DonationFee(200, $commissionPercentage);
             $this->assertTrue(true);
 
-        //Then
+            //Then
         } catch (Exception $e) {
             $this->fail("Exception thrown for commission percentage of 0");
         }
@@ -84,7 +84,7 @@ class DonationFeeTest extends TestCase
             $donationFees = new DonationFee(200, $commissionPercentage);
             $this->assertTrue(true);
 
-        //Then
+            //Then
         } catch (Exception $e) {
             $this->fail("Exception thrown for commission percentage between 0 and 30");
         }
@@ -100,7 +100,7 @@ class DonationFeeTest extends TestCase
             $donationFees = new DonationFee(200, $commissionPercentage);
             $this->assertTrue(true);
 
-        //Then
+            //Then
         } catch (Exception $e) {
             $this->fail("Exception thrown for commission percentage of 30");
         }
@@ -136,7 +136,7 @@ class DonationFeeTest extends TestCase
             $donationFees = new DonationFee($donation, 10);
             $this->assertTrue(true);
 
-        //Then
+            //Then
         } catch (Exception $e) {
             $this->fail("Exception thrown for donation of 100");
         }
@@ -152,7 +152,7 @@ class DonationFeeTest extends TestCase
             $donationFees = new DonationFee($donation, 10);
             $this->assertTrue(true);
 
-        //Then
+            //Then
         } catch (Exception $e) {
             $this->fail("Exception thrown for donation greater than 100");
         }
@@ -160,14 +160,37 @@ class DonationFeeTest extends TestCase
 
     public function testFixedAndCommissionFeeAmountIs60CentsForDonationOf100CentsAndCommissionOf10Percent()
     {
-        // Etant donné une donation de 100 et commission de 10%
+        // Given
         $donationFees = new DonationFee(100, 10);
 
-        // Lorsque qu'on appel la méthode getCommissionAmount()
+        // When
         $actual = $donationFees->getFixedAndCommissionFeeAmount();
 
-        // Alors la Valeur de la commission doit être de 10
+        // Then
         $expected = 60;
         $this->assertEquals($expected, $actual);
+    }
+
+    public function testFixedAndCommissionFeeAmountIsNeverGreaterThan500Cents()
+    {
+        // Given
+        $donation1 = 2000;
+        $donation2 = 5000;
+        $donation3 = 10000000;
+
+        // When
+        $donationFees1 = new DonationFee($donation1, 10);
+        $donationFees2 = new DonationFee($donation2, 10);
+        $donationFees3 = new DonationFee($donation3, 10);
+
+        $actual1 = $donationFees1->getFixedAndCommissionFeeAmount();
+        $actual2 = $donationFees2->getFixedAndCommissionFeeAmount();
+        $actual3 = $donationFees3->getFixedAndCommissionFeeAmount();
+
+        //Then
+        $expected = 500;
+        $this->assertLessThanOrEqual($expected, $actual1);
+        $this->assertLessThanOrEqual($expected, $actual2);
+        $this->assertLessThanOrEqual($expected, $actual3);
     }
 }

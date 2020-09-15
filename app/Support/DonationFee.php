@@ -8,6 +8,7 @@ use Exception;
 class DonationFee
 {
     const FIXED_FEE = 50;
+    const MAX_TOTAL_FEE = 500;
 
     private $donation;
     private $commissionPercentage;
@@ -30,7 +31,8 @@ class DonationFee
 
     public function getFixedAndCommissionFeeAmount()
     {
-        return $this->getCommissionAmount() + self::FIXED_FEE;
+        $totalFee = $this->getCommissionAmount() + self::FIXED_FEE;
+        return ($totalFee > self::MAX_TOTAL_FEE) ? self::MAX_TOTAL_FEE : $totalFee;
     }
 
     public function getAmountCollected()
