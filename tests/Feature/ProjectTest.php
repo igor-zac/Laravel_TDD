@@ -19,4 +19,13 @@ class ProjectTest extends TestCase
         $response->assertOk();
     }
 
+    public function testPresenceOfH1TagWithCorrentContent()
+    {
+        //Given
+        $view = $this->view('project');
+
+        //Then
+        $expected = "<h1>Liste des projets</h1>";
+        $view->assertSee($expected, false);
+    }
 }
