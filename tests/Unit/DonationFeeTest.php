@@ -83,7 +83,8 @@ class DonationFeeTest extends TestCase
         try {
             $donationFees = new DonationFee(200, $commissionPercentage);
             $this->assertTrue(true);
-            //Then
+
+        //Then
         } catch (Exception $e) {
             $this->fail("Exception thrown for commission percentage between 0 and 30");
         }
@@ -98,7 +99,8 @@ class DonationFeeTest extends TestCase
         try {
             $donationFees = new DonationFee(200, $commissionPercentage);
             $this->assertTrue(true);
-            //Then
+
+        //Then
         } catch (Exception $e) {
             $this->fail("Exception thrown for commission percentage of 30");
         }
@@ -112,5 +114,47 @@ class DonationFeeTest extends TestCase
         //Then
         $this->expectException(Exception::class);
         $donationFees = new DonationFee(200, $commissionPercentage);
+    }
+
+    public function testDonationAmountLowerThan100ShouldThrowAnException()
+    {
+        //Given
+        $donation = 80;
+
+        //Then
+        $this->expectException(Exception::class);
+        $donationFees = new DonationFee($donation, 10);
+    }
+    
+    public function testDonationAmountEqualTo100ShouldntThrowAnException()
+    {
+        // Given
+        $donation = 100;
+
+        // When
+        try {
+            $donationFees = new DonationFee($donation, 10);
+            $this->assertTrue(true);
+
+        //Then
+        } catch (Exception $e) {
+            $this->fail("Exception thrown for donation of 100");
+        }
+    }
+
+    public function testDonationAmountGreaterThan100ShouldntThrowAnException()
+    {
+        // Given
+        $donation = 120;
+
+        // When
+        try {
+            $donationFees = new DonationFee($donation, 10);
+            $this->assertTrue(true);
+
+        //Then
+        } catch (Exception $e) {
+            $this->fail("Exception thrown for donation greater than 100");
+        }
     }
 }
