@@ -123,4 +123,13 @@ class ProjectTest extends TestCase
         $projectCreatedRecap->assertSee($user->name);
         $projectCreatedRecap->assertSee($user->projects()->first()->created_at);
     }
+
+    public function testNotAuthenticatedUserCannotAddProject()
+    {
+        //Given
+        $projectListPage = $this->get(route('projects.index'));
+
+        //Then
+        $projectListPage->assertDontSee('<button type="button">Creer un projet</button>', false);
+    }
 }
