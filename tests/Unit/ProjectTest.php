@@ -23,9 +23,7 @@ class ProjectTest extends TestCase
             ->has(Project::factory()->state([
                 'name' => $projectName
             ]))
-            ->create([
-                'name' => $userName
-            ]);
+            ->create();
         $project = Project::factory()
             ->for(User::factory()->state([
                 'name' => $userName,
