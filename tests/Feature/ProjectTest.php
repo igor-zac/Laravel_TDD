@@ -37,15 +37,16 @@ class ProjectTest extends TestCase
     public function testProjectNameAppearsOnTheProjectListPage()
     {
         //Given
+        $projectName = 'My First Project';
         Project::factory()->create([
-            'name' => 'My First Project'
+            'name' => $projectName
         ]);
 
         //When
         $response = $this->get('/projects');
 
         //Then
-        $response->assertSee('My First Project');
+        $response->assertSee($projectName);
     }
 
     public function testProjectDetailPageIsAccessibleUsingProjectId()
