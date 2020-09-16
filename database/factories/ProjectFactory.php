@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -25,7 +26,7 @@ class ProjectFactory extends Factory
         return [
             'name' => $this->faker->name,
             'description' => $this->faker->realText(250),
-            'author' => $this->faker->name
+            'author' => User::factory()
         ];
     }
 }

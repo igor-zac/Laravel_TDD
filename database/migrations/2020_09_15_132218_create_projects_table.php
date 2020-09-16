@@ -17,7 +17,8 @@ class CreateProjectsTable extends Migration
             $table->id();
             $table->string('name', 255);
             $table->mediumText('description');
-            $table->string('author', 255);
+            $table->integer('author');
+            $table->foreign('author')->references('id')->on('users');
             $table->timestamps();
         });
     }
