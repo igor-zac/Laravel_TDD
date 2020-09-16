@@ -124,12 +124,21 @@ class ProjectTest extends TestCase
         $projectCreatedRecap->assertSee($user->projects()->first()->created_at);
     }
 
-    public function testNotAuthenticatedUserCannotAddProject()
+    public function testUnauthenticatedUserCannotAddProject()
     {
         //Given
         $projectListPage = $this->get(route('projects.index'));
 
         //Then
         $projectListPage->assertDontSee('<button type="button">Creer un projet</button>', false);
+    }
+
+    public function testUnauthenticatedUserCannotAccessProjectCreationForm()
+    {
+        //Given
+        $response = $this->get(route('projects.create'));
+
+        //Then
+        $response->assertViewIs('projects.project-list');
     }
 }

@@ -30,6 +30,8 @@ class ProjectController extends Controller
     {
         if (Auth::check()) {
             return view('projects.create-project');
+        } else {
+            return view('projects.project-list');
         }
     }
 
@@ -57,6 +59,8 @@ class ProjectController extends Controller
             $project->save();
 
             return response()->view('projects.create-project_recap', compact('project'), 201);
+        } else {
+            return view('projects.project-list');
         }
     }
 
