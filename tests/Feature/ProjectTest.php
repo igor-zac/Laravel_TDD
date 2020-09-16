@@ -8,8 +8,12 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
+use App\Models\Project;
+
 class ProjectTest extends TestCase
 {
+
+    use DatabaseMigrations;
 
     public function testHttpSuccessStatusOnGetRequestForProjectsUrl()
     {
@@ -30,4 +34,17 @@ class ProjectTest extends TestCase
         $view->assertSee($expected, false);
     }
 
+    public function testProjectNameAppearsOnTheProjectListPage()
+    {
+        //Given
+        Project::factory()->create([
+            'name' => 'My First Project'
+        ]);
+
+        //When
+        $response = $this->get('/projects');
+
+        //Then
+        $response->assertSee('My First Project');
+    }
 }
