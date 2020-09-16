@@ -47,4 +47,33 @@ class ProjectTest extends TestCase
         //Then
         $response->assertSee('My First Project');
     }
+
+    public function testProjectDetailPageIsAccessibleUsingProjectId()
+    {
+        //Given
+        $project = Project::factory()->create();
+        $url = '/projects/'.$project->id;
+
+        //When
+        $response = $this->get($url);
+
+        //Then
+        $response->assertOk();
+    }
+
+    public function testProjectNameAppearsOnTheProjectDetailPage()
+    {
+        //Given
+        $projectName = 'My First Project';
+        $project = Project::factory()->create([
+            'name' => $projectName
+        ]);
+        $url = '/projects/'.$project->id;
+
+        //When
+        $response = $this->get($url);
+
+        //Then
+        $response->assertSee($projectName);
+    }
 }
