@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class ProjectController extends Controller
 {
@@ -85,7 +86,16 @@ class ProjectController extends Controller
      */
     public function edit($id)
     {
-        //
+        if(Auth::check()){
+            $project = Project::find($id);
+
+            if (Gate::allows('update-project', $project)) {
+                return view('projects.edit-project', compact('project'));
+            }
+        }
+
+        return view('projects.project-detail');
+
     }
 
     /**
@@ -97,7 +107,19 @@ class ProjectController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        if(Auth::check()){
+            $project = Project::find($id);
+
+            if (Gate::allows('update-project', $project)) {
+
+                $project->name = $request->input('name');
+                $project->description = $request->input('description');
+
+                return view('projects.edit-project_recap', compact('project'));
+            }
+        }
+
+        return view('projects.project-detail');
     }
 
     /**

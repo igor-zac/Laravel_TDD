@@ -141,4 +141,50 @@ class ProjectTest extends TestCase
         //Then
         $response->assertViewIs('projects.project-list');
     }
+
+    public function testOnlyProjectAuthorCanViewEditButtonOnProject()
+    {
+        //Given
+        $project = Project::factory()
+            ->has(User::factory())
+            ->create();
+        $projectAuthor = $project->user;
+        $anotherUser = User::factory()->create();
+
+        $editButtonStr = '<button type="button">Edit</button>';
+        $projectRoute = route('projects.show', ['project' => $project->id]);
+
+        //When
+        $projectDetailForAuthor = $this->actingAs($projectAuthor)->get($projectRoute);
+        $projetDetailForOtherUser = $this->actingAs($anotherUser)->get($projectRoute);
+        $projectDetailForUnauthenticatedUser = $this->get($projectRoute);
+
+        //Then
+        $projectDetailForAuthor->assertSee($editButtonStr, false);
+        $projetDetailForOtherUser->assertDontSee($editButtonStr, false);
+        $projectDetailForUnauthenticatedUser->assertDontSee($editButtonStr, false);
+    }
+
+    public function testOnlyProjectAuthorCanAccessProjectEditPage()
+    {
+        //Given
+        $project = Project::factory()
+            ->has(User::factory())
+            ->create();
+        $projectAuthor = $project->user;
+        $anotherUser = User::factory()->create();
+
+        $projectEditRoute = route('projects.edit', ['project' => $project->id]);
+
+        //When
+        $projectDetailForAuthor = $this->actingAs($projectAuthor)->get($projectEditRoute);
+        $projetDetailForOtherUser = $this->actingAs($anotherUser)->get($projectEditRoute);
+        $projectDetailForUnauthenticatedUser = $this->get($projectEditRoute);
+
+        //Then
+        $projectDetailForAuthor->assertViewIs('projects.edit-project');
+        $projetDetailForOtherUser->assertViewIs('projects.project-detail');
+        $projectDetailForUnauthenticatedUser->assertViewIs('projects.project-detail');
+    }
+
 }

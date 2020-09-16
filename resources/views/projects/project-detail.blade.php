@@ -14,16 +14,19 @@
 <div class="relative min-h-screen bg-gray-100 dark:bg-gray-900 projectList">
 
     @isset($project)
-            <div style="display: block; width:70%;color:white;">
-                <h1>{{ $project->name }}</h1>
-                <p>Description: <br> {{$project->description}} <br/></p>
-                <p>Author: {{$project->user->name}}</p>
-                <p>Date: {{$project->created_at}}</p>
+        <div style="display: block; width:70%;color:white;">
+            <h1>{{ $project->name }}</h1>
+            <p>Description: <br> {{$project->description}} <br/></p>
+            <p>Author: {{$project->user->name}}</p>
+            <p>Date: {{$project->updated_at}}</p>
 
-                <a href="/products/{{$project->id}}">
-                    <button type="button">Details</button>
+            @can('update-project', $project)
+                <a href="{{route('projects.edit', ['project' => $project->id])}}">
+                    <button type="button">Edit</button>
                 </a>
-            </div>
+            @endcan
+
+        </div>
     @endisset($project)
 </div>
 </body>

@@ -13,15 +13,15 @@
 <div>
     @isset($project)
         <div>
-            <h1>Project created</h1>
+            <h1>Project modified</h1>
 
             <p>Project name: <br> {{$project->name}} <br/></p>
             <p>Description: <br> {{$project->description}} <br/></p>
             <p>Author: {{$project->user->name}}</p>
             <p>Date: {{$project->updated_at}}</p>
 
-            <a href="{{route('projects.index')}}">
-                Go back to project list
+            <a href="{{route('projects.show', ['project' => $project->id])}}">
+                Go back to project page
             </a>
         </div>
     @endisset($project)
