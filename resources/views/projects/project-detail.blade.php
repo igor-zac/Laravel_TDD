@@ -404,7 +404,7 @@
             <div style="display: block; width:70%;color:white;">
                 <h1>{{ $project->name }}</h1>
                 <p>Description: <br> {{$project->description}} <br/></p>
-                <p>Author: {{$project->author}}</p>
+                <p>Author: {{$project->user->name}}</p>
                 <p>Date: {{$project->created_at}}</p>
                 <a href="/products/{{$project->id}}">
                     <button type="button">Details</button>

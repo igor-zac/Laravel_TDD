@@ -3,6 +3,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -76,5 +77,23 @@ class ProjectTest extends TestCase
 
         //Then
         $response->assertSee($projectName);
+    }
+
+    public function testAuthorNameAppearsOnProjectDetailPage()
+    {
+        //Given
+        $authorName = 'Test User';
+        $project = Project::factory()
+            ->for(User::factory()->state([
+                'name' => $authorName
+            ]))
+            ->create();
+        $url = '/projects/'.$project->id;
+
+        //When
+        $response = $this->get($url);
+
+        //Then
+        $response->assertSee($authorName);
     }
 }
