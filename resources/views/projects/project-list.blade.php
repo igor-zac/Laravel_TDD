@@ -398,8 +398,14 @@
     </style>
 </head>
 <body class="antialiased">
-<div class="relative min-h-screen bg-gray-100 dark:bg-gray-900 projectList">
+<div>
     <h1>Liste des projets</h1>
+
+    @if(auth()->check())
+        <a href="{{route('projects.create')}}">
+            <button type="button">Creer un projet</button>
+        </a>
+    @endif
 
     @isset($projects)
         @foreach ($projects as $project)
