@@ -54,5 +54,24 @@ class ApiTest extends TestCase
             ]);
     }
 
+    public function testProjectAuthorNamePresentInProjectDetailApiCall()
+    {
+        //Given
+        $authorName = 'John Doe';
+        $project = Project::factory()
+            ->for(User::factory()->state([
+                'name' => $authorName
+            ]))
+            ->create();
+        $apiEndpoint = route('api.projects.show', ['project' => $project->id]);
 
+        //When
+        $response = $this->getJson($apiEndpoint);
+
+        //Then
+        $response->assertStatus(200)
+            ->assertJsonFragment([
+                'author' => $authorName
+            ]);
+    }
 }
