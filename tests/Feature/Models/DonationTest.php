@@ -18,14 +18,28 @@ class DonationTest extends TestCase
     public function testProjectCanHaveManyDonations()
     {
         //Given
-        $project = Project::factory()->create();
+        $project = Project::factory()
+            ->has(Donation::factory()->count(3))
+            ->create();
+
+        //When
+        $arrayOfDonations = $project->donations()->get()->toArray();
 
         //Then
-        $this->assertTrue(count($project->donations()->toArray()[0]) > 1);
+        $this->assertTrue( count($arrayOfDonations) > 1);
     }
 
     public function testUserCanDoManyDonations()
     {
+        //Given
+        $project = User::factory()
+            ->has(Donation::factory()->count(3))
+            ->create();
 
+        //When
+        $arrayOfDonations = $project->donations()->get()->toArray();
+
+        //Then
+        $this->assertTrue( count($arrayOfDonations) > 1);
     }
 }

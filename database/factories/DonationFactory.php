@@ -26,8 +26,8 @@ class DonationFactory extends Factory
     {
         return [
             'amount' => $this->faker->randomNumber(),
-            'userId' => User::factory(),
-            'projectId' => Project::factory(),
+            'user_id' => User::factory(),
+            'project_id' => Project::factory(),
             'isValid' => $this->faker->boolean
         ];
     }
