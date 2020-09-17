@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Project;
+use App\Http\Resources\Project as ProjectResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/projects', function(){
+    return ProjectResource::collection(Project::all());
+})->name('api.projects.index');
