@@ -9,7 +9,7 @@ use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class DonationTest extends TestCase
 {
@@ -21,7 +21,7 @@ class DonationTest extends TestCase
         $project = Project::factory()->create();
 
         //Then
-        $this->assertTrue(count($project->donations()->toArray()) > 1);
+        $this->assertTrue(count($project->donations()->toArray()[0]) > 1);
     }
 
     public function testUserCanDoManyDonations()
