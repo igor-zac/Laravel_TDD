@@ -38,13 +38,16 @@ class DonationFeeTest extends TestCase
     public function testAmountCollectedIs130CentsForDonationOf200CentsAndCommissionOf10Percent()
     {
         //Given
-        $donationFees = new DonationFee(200, 10);
+        $donation = 200;
+        $commissionPercentage = 10;
+        $fixedFee = 50;
+        $donationFees = new DonationFee($donation, $commissionPercentage);
 
         //When
         $perceivedAmount = $donationFees->getAmountCollected();
 
         //Then
-        $expected = 130;
+        $expected = $donation - ($fixedFee + $donation * $commissionPercentage / 100); //130
         $this->assertEquals($expected, $perceivedAmount);
     }
 
@@ -64,14 +67,10 @@ class DonationFeeTest extends TestCase
         $commissionPercentage = 0;
 
         // When
-        try {
-            $donationFees = new DonationFee(200, $commissionPercentage);
-            $this->assertTrue(true);
+        $donationFees = new DonationFee(200, $commissionPercentage);
 
-            //Then
-        } catch (Exception $e) {
-            $this->fail("Exception thrown for commission percentage of 0");
-        }
+        // Then
+        $this->assertInstanceOf(DonationFee::class, $donationFees);
     }
 
     public function testCommissionPercentageBetween0And30ShouldntThrowAnException()
@@ -80,14 +79,10 @@ class DonationFeeTest extends TestCase
         $commissionPercentage = 15;
 
         // When
-        try {
-            $donationFees = new DonationFee(200, $commissionPercentage);
-            $this->assertTrue(true);
+        $donationFees = new DonationFee(200, $commissionPercentage);
 
-            //Then
-        } catch (Exception $e) {
-            $this->fail("Exception thrown for commission percentage between 0 and 30");
-        }
+        // Then
+        $this->assertInstanceOf(DonationFee::class, $donationFees);
     }
 
     public function testCommissionPercentageEqualTo30ShouldntThrowAnException()

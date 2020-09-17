@@ -5,17 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Project extends Model
+class Donation extends Model
 {
     use HasFactory;
 
     public function user()
     {
-        return $this->belongsTo('App\Models\User', 'author');
+        return $this->belongsTo('App\Models\User');
     }
 
-    public function donations()
+    public function project()
     {
-        return $this->hasMany('App\Models\Donation');
+        return $this->belongsTo('App\Models\Project');
     }
 }
