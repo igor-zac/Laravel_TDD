@@ -19,13 +19,16 @@ class ProjectTest extends TestCase
     public function testHttpSuccessStatusOnGetRequestForProjectsUrl()
     {
         //Given
-        $response = $this->get('/projects');
+        $url = route('projects.index');
+
+        //When
+        $response = $this->get($url);
 
         //Then
         $response->assertOk();
     }
 
-    public function testPresenceOfH1TagWithCorrentContent()
+    public function testPresenceOfH1TagWithCorrectContent()
     {
         //Given
         $view = $this->view('projects.project-list');
@@ -38,13 +41,14 @@ class ProjectTest extends TestCase
     public function testProjectNameAppearsOnTheProjectListPage()
     {
         //Given
+        $url = route('projects.index');
         $projectName = 'My First Project';
         Project::factory()->create([
             'name' => $projectName
         ]);
 
         //When
-        $response = $this->get('/projects');
+        $response = $this->get($url);
 
         //Then
         $response->assertSee($projectName);
@@ -97,7 +101,32 @@ class ProjectTest extends TestCase
         $response->assertSee($authorName);
     }
 
-    public function testAuthenticatedUserCanCreateAProject()
+    public function testAuthenticatedUserCanViewCreateProjectButton()
+    {
+        //Given
+        $user = User::factory()->create();
+
+        //When
+        $projectListPage = $this->actingAs($user)->get(route('projects.index'));
+
+        //Then
+        $projectListPage->assertSee('<button type="button">Creer un projet</button>', false);
+
+    }
+
+    public function testAuthenticatedUserCanAccessProjectCreationForm()
+    {
+        //Given
+        $user = User::factory()->create();
+
+        //When
+        $projectCreateForm = $this->actingAs($user)->get(route('projects.create'));
+
+        //Then
+        $projectCreateForm->assertViewIs('projects.create-project');
+    }
+
+    public function testAuthenticatedUserCanCreateNewProjectAndViewRecap()
     {
         //Given
         $user = User::factory()->create();
@@ -107,15 +136,9 @@ class ProjectTest extends TestCase
         ];
 
         //When
-        $projectListPage = $this->actingAs($user)->get(route('projects.index'));
-        $projectCreateForm = $this->actingAs($user)->get(route('projects.create'));
         $projectCreatedRecap = $this->actingAs($user)->post(route('projects.store'), $projectData);
 
         //Then
-        $projectListPage->assertSee('<button type="button">Creer un projet</button>', false);
-
-        $projectCreateForm->assertViewIs('projects.create-project');
-
         $projectCreatedRecap->assertCreated();
         $projectCreatedRecap->assertViewIs('projects.create-project_recap');
         $projectCreatedRecap->assertSee($projectData['name']);
@@ -127,7 +150,10 @@ class ProjectTest extends TestCase
     public function testUnauthenticatedUserCannotAddProject()
     {
         //Given
-        $projectListPage = $this->get(route('projects.index'));
+        $url = route('projects.index');
+
+        //When
+        $projectListPage = $this->get($url);
 
         //Then
         $projectListPage->assertDontSee('<button type="button">Creer un projet</button>', false);
@@ -136,7 +162,10 @@ class ProjectTest extends TestCase
     public function testUnauthenticatedUserCannotAccessProjectCreationForm()
     {
         //Given
-        $response = $this->get(route('projects.create'));
+        $url = route('projects.create');
+
+        //When
+        $response = $this->get($url);
 
         //Then
         $response->assertViewIs('projects.project-list');
