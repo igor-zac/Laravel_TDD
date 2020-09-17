@@ -8,30 +8,25 @@
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-
 </head>
 <body class="antialiased">
-<div class="relative min-h-screen bg-gray-100 dark:bg-gray-900 projectList">
-
+<div>
     @isset($project)
-        <div style="display: block; width:70%;color:white;">
-            <h1>{{ $project->name }}</h1>
+        <div>
+            <h1>Donation sent</h1>
+
+            <h2>Project</h2>
+            <p>Project name: <br> {{$project->name}} <br/></p>
             <p>Description: <br> {{$project->description}} <br/></p>
             <p>Author: {{$project->user->name}}</p>
             <p>Date: {{$project->updated_at}}</p>
 
-            @can('update-project', $project)
-                <a href="{{route('projects.edit', ['project' => $project->id])}}">
-                    <button type="button">Edit</button>
-                </a>
-            @endcan
+            <h2>Donation</h2>
+            <p>Amount: <br> {{$donation->amount}} <br/></p>
 
-            @if(auth()->check())
-                <a href="{{route('donations.create', ["project" => $project->id])}}">
-                    <button type="button">Donate</button>
-                </a>
-            @endif
-
+            <a href="{{route('projects.show', ['project' => $project->id])}}">
+                Go back to project page
+            </a>
         </div>
     @endisset($project)
 </div>

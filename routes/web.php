@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DonationController;
 use Illuminate\Support\Facades\Route;
 
 use \App\Http\Controllers\ProjectController;
@@ -24,3 +25,9 @@ Route::resource('projects', ProjectController::class);
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
+
+Route::prefix('/projects/{project}')->group(function () {
+    Route::resource('donations', DonationController::class)->only([
+        'create', 'store'
+    ]);
+});
