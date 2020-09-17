@@ -4,6 +4,8 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -58,7 +60,7 @@ class ProjectTest extends TestCase
     {
         //Given
         $project = Project::factory()->create();
-        $url = '/projects/'.$project->id;
+        $url = '/projects/' . $project->id;
 
         //When
         $response = $this->get($url);
@@ -74,7 +76,7 @@ class ProjectTest extends TestCase
         $project = Project::factory()->create([
             'name' => $projectName
         ]);
-        $url = '/projects/'.$project->id;
+        $url = '/projects/' . $project->id;
 
         //When
         $response = $this->get($url);
@@ -92,7 +94,7 @@ class ProjectTest extends TestCase
                 'name' => $authorName
             ]))
             ->create();
-        $url = '/projects/'.$project->id;
+        $url = '/projects/' . $project->id;
 
         //When
         $response = $this->get($url);
@@ -163,57 +165,109 @@ class ProjectTest extends TestCase
     {
         //Given
         $url = route('projects.create');
-        $redirectionRoute = route('projects.index');
-
-        //When
-        $response = $this->get($url);
+        $redirectionRoute = route('login');
 
         //Then
-        $response->assertRedirect($redirectionRoute);
+        $this->expectException(AuthenticationException::class);
+
+        $this->get($url);
     }
 
-    public function testOnlyProjectAuthorCanViewEditButtonOnProject()
+    public function testOnlyProjectAuthorCanViewEditButtonOnProjectPage()
     {
         //Given
         $project = Project::factory()
             ->create();
         $projectAuthor = $project->user;
-        $anotherUser = User::factory()->create();
 
         $editButtonStr = '<button type="button">Edit</button>';
         $projectRoute = route('projects.show', ['project' => $project->id]);
 
         //When
         $projectDetailForAuthor = $this->actingAs($projectAuthor)->get($projectRoute);
-        $projetDetailForOtherUser = $this->actingAs($anotherUser)->get($projectRoute);
-        $projectDetailForUnauthenticatedUser = $this->get($projectRoute);
 
         //Then
         $projectDetailForAuthor->assertSee($editButtonStr, false);
-        $projetDetailForOtherUser->assertDontSee($editButtonStr, false);
-        $projectDetailForUnauthenticatedUser->assertDontSee($editButtonStr, false);
     }
 
-    public function testOnlyProjectAuthorCanAccessProjectEditPage()
+    public function testAuthenticatedUserThatIsNotAuthorCannotViewEditButtonOnProjectPage()
+    {
+        //Given
+        $project = Project::factory()
+            ->create();
+        $userNotAuthor = User::factory()->create();
+
+        $editButtonStr = '<button type="button">Edit</button>';
+        $projectRoute = route('projects.show', ['project' => $project->id]);
+
+        //When
+        $projetDetailForRandomUser = $this->actingAs($userNotAuthor)->get($projectRoute);
+
+        //Then
+        $projetDetailForRandomUser->assertDontSee($editButtonStr, false);
+    }
+
+    public function testUnauthenticatedUserCannotViewEditButtonOnProjectPage()
+    {
+        //Given
+        $project = Project::factory()
+            ->create();
+
+        $editButtonStr = '<button type="button">Edit</button>';
+        $projectRoute = route('projects.show', ['project' => $project->id]);
+
+        //When
+        $projectPageForUnauthenticatedUser = $this->get($projectRoute);
+
+        //Then
+        $projectPageForUnauthenticatedUser->assertDontSee($editButtonStr, false);
+    }
+
+    public function testProjectAuthorCanAccessProjectEditPage()
     {
         //Given
         $project = Project::factory()
             ->create();
         $projectAuthor = $project->user;
-        $anotherUser = User::factory()->create();
 
         $projectEditRoute = route('projects.edit', ['project' => $project->id]);
-        $redirectionRoute = route('projects.show', ['project' => $project->id]);
 
         //When
         $projectDetailForAuthor = $this->actingAs($projectAuthor)->get($projectEditRoute);
-        $projectDetailForOtherUser = $this->actingAs($anotherUser)->get($projectEditRoute);
-        $projectDetailForUnauthenticatedUser = $this->get($projectEditRoute);
 
         //Then
         $projectDetailForAuthor->assertViewIs('projects.edit-project');
-        $projectDetailForOtherUser->assertRedirect($redirectionRoute);
-        $projectDetailForUnauthenticatedUser->assertRedirect($redirectionRoute);
     }
 
+    public function testAuthenticatedUserThatIsNotAuthorCannotAccessProjectEditPage()
+    {
+        //Given
+        $project = Project::factory()
+            ->create();
+        $userNotAuthor = User::factory()->create();
+
+        $projectEditRoute = route('projects.edit', ['project' => $project->id]);
+
+        //Then
+        $this->expectException(AuthorizationException::class);
+
+        //When
+        $this->actingAs($userNotAuthor)->get($projectEditRoute);
+
+    }
+
+    public function testUnauthenticatedUserCannotAccessProjectEditPage()
+    {
+        //Given
+        $project = Project::factory()
+            ->create();
+
+        $projectEditRoute = route('projects.edit', ['project' => $project->id]);
+
+        //Then
+        $this->expectException(AuthenticationException::class);
+
+        //When
+        $this->get($projectEditRoute);
+    }
 }

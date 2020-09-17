@@ -9,6 +9,10 @@ class Project extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'author' => 'integer',
+    ];
+
     public function user()
     {
         return $this->belongsTo('App\Models\User', 'author');

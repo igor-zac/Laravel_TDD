@@ -20,7 +20,7 @@
             <p>Author: {{$project->user->name}}</p>
             <p>Date: {{$project->updated_at}}</p>
 
-            @can('update-project', $project)
+            @can('update', $project)
                 <a href="{{route('projects.edit', ['project' => $project->id])}}">
                     <button type="button">Edit</button>
                 </a>

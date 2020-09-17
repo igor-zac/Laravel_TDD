@@ -3,12 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class ProjectController extends Controller
 {
+
+    /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth')->except('index', 'show');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -16,10 +28,10 @@ class ProjectController extends Controller
      */
     public function index()
     {
-
         $projects = Project::all();
 
         return view('projects.project-list', compact('projects'));
+
     }
 
     /**
@@ -29,11 +41,8 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        if (Auth::check()) {
-            return view('projects.create-project');
-        }
+        return view('projects.create-project');
 
-        return redirect()->route('projects.index');
     }
 
     /**
@@ -44,25 +53,22 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        if (Auth::check()) {
 
-            $validatedData = $request->validate([
-                'name' => 'required|max:255',
-                'description' => 'required',
-            ]);
+        $request->validate([
+            'name' => 'required|max:255',
+            'description' => 'required',
+        ]);
 
-            $project = new Project;
+        $project = new Project;
 
-            $project->name = $request->input('name');
-            $project->description = $request->input('description');
-            $project->author = Auth::id();
+        $project->name = $request->input('name');
+        $project->description = $request->input('description');
+        $project->author = Auth::id();
 
-            $project->save();
+        $project->save();
 
-            return response()->view('projects.create-project_recap', compact('project'), 201);
-        }
+        return response()->view('projects.create-project_recap', compact('project'), 201);
 
-        return redirect()->route('projects.index');
     }
 
     /**
@@ -76,6 +82,7 @@ class ProjectController extends Controller
         $project = Project::find($id);
 
         return view('projects.project-detail', compact('project'));
+
     }
 
     /**
@@ -83,18 +90,16 @@ class ProjectController extends Controller
      *
      * @param int $id
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function edit($id)
     {
-        if (Auth::check()) {
-            $project = Project::find($id);
+        $project = Project::find($id);
 
-            if (Gate::allows('update-project', $project)) {
-                return view('projects.edit-project', compact('project'));
-            }
-        }
+        Gate::authorize('update', $project);
 
-        return redirect()->route('projects.show', ['project' => $id]);
+        return view('projects.edit-project', compact('project'));
+
     }
 
     /**
@@ -103,22 +108,20 @@ class ProjectController extends Controller
      * @param \Illuminate\Http\Request $request
      * @param int $id
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(Request $request, $id)
     {
-        if (Auth::check()) {
-            $project = Project::find($id);
+        $project = Project::find($id);
 
-            if (Gate::allows('update-project', $project)) {
+        Gate::authorize('update', $project);
 
-                $project->name = $request->input('name');
-                $project->description = $request->input('description');
+        $project->name = $request->input('name');
+        $project->description = $request->input('description');
 
-                return view('projects.edit-project_recap', compact('project'));
-            }
-        }
+        $project->save();
 
-        return redirect()->route('projects.show', ['project' => $id]);
+        return view('projects.edit-project_recap', compact('project'));
     }
 
     /**
