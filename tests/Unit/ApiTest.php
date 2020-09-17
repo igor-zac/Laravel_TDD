@@ -35,5 +35,24 @@ class ApiTest extends TestCase
             ]);
     }
 
+    public function testProjectNamePresentInProjectDetailApiCall()
+    {
+        //Given
+        $projectName = 'Test Project';
+        $project = Project::factory()->create([
+            'name' => $projectName
+        ]);
+        $apiEndpoint = route('api.projects.show', ['project' => $project->id]);
+
+        //When
+        $response = $this->getJson($apiEndpoint);
+
+        //Then
+        $response->assertStatus(200)
+            ->assertJsonFragment([
+                'name' => $projectName
+            ]);
+    }
+
 
 }

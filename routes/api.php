@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProjectJsonApiController;
 use App\Models\Project;
 use App\Http\Resources\Project as ProjectResource;
 use Illuminate\Http\Request;
@@ -20,6 +21,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/projects', function(){
-    return ProjectResource::collection(Project::all());
-})->name('api.projects.index');
+Route::resource('projects', ProjectJsonApiController::class, ['as' => 'api']);
+
+
