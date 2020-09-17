@@ -175,7 +175,6 @@ class ProjectTest extends TestCase
     {
         //Given
         $project = Project::factory()
-            ->has(User::factory())
             ->create();
         $projectAuthor = $project->user;
         $anotherUser = User::factory()->create();
@@ -198,7 +197,6 @@ class ProjectTest extends TestCase
     {
         //Given
         $project = Project::factory()
-            ->has(User::factory())
             ->create();
         $projectAuthor = $project->user;
         $anotherUser = User::factory()->create();
