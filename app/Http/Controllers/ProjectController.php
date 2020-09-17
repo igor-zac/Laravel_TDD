@@ -31,9 +31,9 @@ class ProjectController extends Controller
     {
         if (Auth::check()) {
             return view('projects.create-project');
-        } else {
-            return view('projects.project-list');
         }
+
+        return redirect()->route('projects.index');
     }
 
     /**
@@ -60,9 +60,9 @@ class ProjectController extends Controller
             $project->save();
 
             return response()->view('projects.create-project_recap', compact('project'), 201);
-        } else {
-            return view('projects.project-list');
         }
+
+        return redirect()->route('projects.index');
     }
 
     /**
@@ -86,7 +86,7 @@ class ProjectController extends Controller
      */
     public function edit($id)
     {
-        if(Auth::check()){
+        if (Auth::check()) {
             $project = Project::find($id);
 
             if (Gate::allows('update-project', $project)) {
@@ -94,8 +94,7 @@ class ProjectController extends Controller
             }
         }
 
-        return view('projects.project-detail');
-
+        return redirect()->route('projects.show', ['project' => $id]);
     }
 
     /**
@@ -107,7 +106,7 @@ class ProjectController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if(Auth::check()){
+        if (Auth::check()) {
             $project = Project::find($id);
 
             if (Gate::allows('update-project', $project)) {
@@ -119,7 +118,7 @@ class ProjectController extends Controller
             }
         }
 
-        return view('projects.project-detail');
+        return redirect()->route('projects.show', ['project' => $id]);
     }
 
     /**

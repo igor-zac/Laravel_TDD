@@ -163,12 +163,13 @@ class ProjectTest extends TestCase
     {
         //Given
         $url = route('projects.create');
+        $redirectionRoute = route('projects.index');
 
         //When
         $response = $this->get($url);
 
         //Then
-        $response->assertViewIs('projects.project-list');
+        $response->assertRedirect($redirectionRoute);
     }
 
     public function testOnlyProjectAuthorCanViewEditButtonOnProject()
@@ -202,16 +203,17 @@ class ProjectTest extends TestCase
         $anotherUser = User::factory()->create();
 
         $projectEditRoute = route('projects.edit', ['project' => $project->id]);
+        $redirectionRoute = route('projects.show', ['project' => $project->id]);
 
         //When
         $projectDetailForAuthor = $this->actingAs($projectAuthor)->get($projectEditRoute);
-        $projetDetailForOtherUser = $this->actingAs($anotherUser)->get($projectEditRoute);
+        $projectDetailForOtherUser = $this->actingAs($anotherUser)->get($projectEditRoute);
         $projectDetailForUnauthenticatedUser = $this->get($projectEditRoute);
 
         //Then
         $projectDetailForAuthor->assertViewIs('projects.edit-project');
-        $projetDetailForOtherUser->assertViewIs('projects.project-detail');
-        $projectDetailForUnauthenticatedUser->assertViewIs('projects.project-detail');
+        $projectDetailForOtherUser->assertRedirect($redirectionRoute);
+        $projectDetailForUnauthenticatedUser->assertRedirect($redirectionRoute);
     }
 
 }
