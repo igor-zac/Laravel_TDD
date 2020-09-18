@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Donation;
+use App\Models\User;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;

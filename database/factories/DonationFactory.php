@@ -28,7 +28,7 @@ class DonationFactory extends Factory
             'amount' => $this->faker->randomNumber(),
             'user_id' => User::factory(),
             'project_id' => Project::factory(),
-            'isValid' => $this->faker->boolean
+            'validated' => $this->faker->boolean
         ];
     }
 }

@@ -53,7 +53,7 @@ class DonationController extends Controller
             'amount' => $request->input('amount'),
             'project_id' => $project->id,
             'user_id' => Auth::id(),
-            'isValid' => true
+            'validated' => false
         ]);
 
         return response()->view('donations.create-donation_recap', compact('project', 'donation'), 201);

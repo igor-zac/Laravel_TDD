@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DonationController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 use \App\Http\Controllers\ProjectController;
@@ -30,6 +31,8 @@ Route::resource('donations', DonationController::class)->only([
 Route::resource('projects.donations', DonationController::class)->shallow()->only([
     'create', 'store', 'show'
 ]);
+
+Route::post('/pay/{donation}', [PaymentController::class, 'pay'])->name('pay');
 
 //Authentication
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
