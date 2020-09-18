@@ -18,7 +18,7 @@
     <p>Author: {{$project->user->name}}</p>
     <p>Date: {{$project->updated_at}}</p>
 
-    <form action="{{route('donations.store',["project" => $project->id])}}" method="post">
+    <form action="{{route('projects.donations.store',["project" => $project->id])}}" method="post">
 
         <label for="donation_amount">Amount :</label><br>
         <input type="number" id="donation_amount" name="amount"><br>

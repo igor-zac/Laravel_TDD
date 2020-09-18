@@ -20,18 +20,18 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+//Projects
 Route::resource('projects', ProjectController::class);
 
+//Donations
+Route::resource('donations', DonationController::class)->only([
+    'index'
+]);
+Route::resource('projects.donations', DonationController::class)->shallow()->only([
+    'create', 'store', 'show'
+]);
+
+//Authentication
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
-
-Route::prefix('/projects/{project}')->group(function () {
-    Route::resource('donations', DonationController::class)->only([
-        'create', 'store'
-    ]);
-});
-
-Route::resource('donations', DonationController::class)->only([
-    'index', 'show'
-]);

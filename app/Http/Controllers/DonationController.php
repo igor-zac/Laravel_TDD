@@ -31,13 +31,12 @@ class DonationController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @param int $projectId
+     * @param Project $project
      * @return \Illuminate\Http\Response
      */
-    public function create($projectId)
+    public function create(Project $project)
     {
-        $project = Project::find($projectId);
-
+        echo $project->name;
         return view('donations.create-donation', compact('project'));
 
     }
@@ -45,14 +44,13 @@ class DonationController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param int $projectId
+     * @param Project $project
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, $projectId)
+    public function store(Request $request, Project $project)
     {
         $donation = new Donation();
-        $project = Project::find($projectId);
 
         $donation->amount = $request->input('amount');
         $donation->project_id = $project->id;
@@ -68,48 +66,13 @@ class DonationController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param Donation $donation
      * @return \Illuminate\Http\Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function show($id)
+    public function show(Donation $donation)
     {
-        $donation = Donation::find($id);
-
         return view('donations.donation-detail', compact('donation'));
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

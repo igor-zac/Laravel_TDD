@@ -56,7 +56,7 @@ class DonationTest extends TestCase
         $authenticatedUser = User::factory()->create();
         $project = Project::factory()->create();
 
-        $projectDonationRoute = route('donations.create', ["project" => $project->id]);
+        $projectDonationRoute = route('projects.donations.create', ["project" => $project->id]);
 
         //When
         $projectPage = $this->actingAs($authenticatedUser)->get($projectDonationRoute);
@@ -71,7 +71,7 @@ class DonationTest extends TestCase
         $project = Project::factory()->create();
 
         $projectRoute = route('projects.show', ["project" => $project->id]);
-        $projectDonationRoute = route('donations.create', ["project" => $project->id]);
+        $projectDonationRoute = route('projects.donations.create', ["project" => $project->id]);
 
         //Then
         $this->expectException(AuthenticationException::class);
@@ -89,7 +89,7 @@ class DonationTest extends TestCase
         $donationAmount = 1000;
         $donationData = ['amount' => $donationAmount];
 
-        $DonationStoreRoute = route('donations.store', ["project" => $project->id]);
+        $DonationStoreRoute = route('projects.donations.store', ["project" => $project->id]);
 
         //When
         $donationRecap = $this->actingAs($authenticatedUser)->post($DonationStoreRoute, $donationData);
@@ -112,7 +112,7 @@ class DonationTest extends TestCase
         $donationAmount = 1000;
         $donationData = ['amount' => $donationAmount];
 
-        $DonationStoreRoute = route('donations.store', ["project" => $project->id]);
+        $DonationStoreRoute = route('projects.donations.store', ["project" => $project->id]);
 
         //Then
         $this->expectException(AuthenticationException::class);

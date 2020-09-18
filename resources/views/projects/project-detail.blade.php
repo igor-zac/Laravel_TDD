@@ -27,7 +27,7 @@
             @endcan
 
             @auth
-                <a href="{{route('donations.create', ["project" => $project->id])}}">
+                <a href="{{route('projects.donations.create', ["project" => $project->id])}}">
                     <button type="button">Donate</button>
                 </a>
             @endauth
