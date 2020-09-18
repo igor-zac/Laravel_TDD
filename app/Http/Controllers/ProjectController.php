@@ -59,13 +59,11 @@ class ProjectController extends Controller
             'description' => 'required',
         ]);
 
-        $project = new Project;
-
-        $project->name = $request->input('name');
-        $project->description = $request->input('description');
-        $project->author = Auth::id();
-
-        $project->save();
+        $project = Project::create([
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
+            'author' => Auth::id()
+        ]);
 
         return response()->view('projects.create-project_recap', compact('project'), 201);
 
@@ -74,13 +72,11 @@ class ProjectController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param Project $project
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Project $project)
     {
-        $project = Project::find($id);
-
         return view('projects.project-detail', compact('project'));
 
     }
@@ -88,14 +84,12 @@ class ProjectController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
+     * @param Project $project
      * @return \Illuminate\Http\Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function edit($id)
+    public function edit(Project $project)
     {
-        $project = Project::find($id);
-
         Gate::authorize('update', $project);
 
         return view('projects.edit-project', compact('project'));
@@ -106,14 +100,12 @@ class ProjectController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param int $id
+     * @param Project $project
      * @return \Illuminate\Http\Response
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Project $project)
     {
-        $project = Project::find($id);
-
         Gate::authorize('update', $project);
 
         $project->name = $request->input('name');

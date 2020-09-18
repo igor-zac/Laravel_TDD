@@ -9,6 +9,13 @@ class Donation extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['amount', 'project_id', 'user_id', 'isValid'];
+
     protected $casts = [
         'amount' => 'integer',
         'user_id' => 'integer',

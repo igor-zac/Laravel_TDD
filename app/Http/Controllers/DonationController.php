@@ -36,7 +36,6 @@ class DonationController extends Controller
      */
     public function create(Project $project)
     {
-        echo $project->name;
         return view('donations.create-donation', compact('project'));
 
     }
@@ -50,14 +49,12 @@ class DonationController extends Controller
      */
     public function store(Request $request, Project $project)
     {
-        $donation = new Donation();
-
-        $donation->amount = $request->input('amount');
-        $donation->project_id = $project->id;
-        $donation->user_id = Auth::id();
-        $donation->isValid = true;
-
-        $donation->save();
+        $donation = Donation::create([
+            'amount' => $request->input('amount'),
+            'project_id' => $project->id,
+            'user_id' => Auth::id(),
+            'isValid' => true
+        ]);
 
         return response()->view('donations.create-donation_recap', compact('project', 'donation'), 201);
 
