@@ -401,11 +401,11 @@
 <div>
     <h1>Liste des projets</h1>
 
-    @if(auth()->check())
+    @auth
         <a href="{{route('projects.create')}}">
             <button type="button">Creer un projet</button>
         </a>
-    @endif
+    @endauth
 
     @isset($projects)
         @foreach ($projects as $project)

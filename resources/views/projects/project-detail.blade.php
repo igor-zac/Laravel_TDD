@@ -26,11 +26,11 @@
                 </a>
             @endcan
 
-            @if(auth()->check())
+            @auth
                 <a href="{{route('donations.create', ["project" => $project->id])}}">
                     <button type="button">Donate</button>
                 </a>
-            @endif
+            @endauth
 
         </div>
     @endisset($project)
