@@ -31,3 +31,7 @@ Route::prefix('/projects/{project}')->group(function () {
         'create', 'store'
     ]);
 });
+
+Route::resource('donations', DonationController::class)->only([
+    'index', 'show'
+]);

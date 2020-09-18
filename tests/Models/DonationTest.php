@@ -7,6 +7,8 @@ use App\Models\Project;
 use App\Models\User;
 
 
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -71,11 +73,11 @@ class DonationTest extends TestCase
         $projectRoute = route('projects.show', ["project" => $project->id]);
         $projectDonationRoute = route('donations.create', ["project" => $project->id]);
 
-        //When
-        $projectPage = $this->get($projectDonationRoute);
-
         //Then
-        $projectPage->assertRedirect($projectRoute);
+        $this->expectException(AuthenticationException::class);
+
+        //When
+        $this->get($projectDonationRoute);
     }
 
     public function testAuthenticatedUserCanCreateDonationInDB()
@@ -112,13 +114,110 @@ class DonationTest extends TestCase
 
         $DonationStoreRoute = route('donations.store', ["project" => $project->id]);
 
+        //Then
+        $this->expectException(AuthenticationException::class);
+
         //When
         $this->post($DonationStoreRoute, $donationData);
+    }
+
+    public function testAuthenticatedUserCanViewHisDonationList()
+    {
+        //Given
+        $user = User::factory()
+            ->has(Donation::factory()->count(3))
+            ->create();
+        $donations = $user->donations()->get()->toArray();
+
+        $donationListRoute = route('donations.index');
+
+        //When
+        $donationListPage = $this->actingAs($user)->get($donationListRoute);
 
         //Then
-        $this->assertDatabaseMissing('donations', [
-            'amount' => $donationAmount,
-            'project_id' => $project->id
-        ]);
+        foreach ($donations as $donation){
+            $donationListPage->assertSee($donation["id"]);
+        }
+    }
+
+    public function testAuthenticatedUserCannotViewAnotherUsersDonationList()
+    {
+        //Given
+        $donations = Donation::factory()
+            ->count(3)
+            ->create();
+        $user = User::factory()->create();
+
+        $donationListRoute = route('donations.index');
+
+        //When
+        $donationListPage = $this->actingAs($user)->get($donationListRoute);
+
+        //Then
+        foreach ($donations as $donation){
+            $donationListPage->assertDontSee('<p>Amount: <br> '. $donation->amount .' <br/></p>');
+            $donationListPage->assertDontSee('<p>Project: '. $donation->project->name .'</p>');
+        }
+    }
+
+    public function testUnauthenticatedUserCannotViewDonationList()
+    {
+        //Given
+        Donation::factory()
+            ->count(3)
+            ->create();
+
+        $donationListRoute = route('donations.index');
+
+        //Then
+        $this->expectException(AuthenticationException::class);
+
+        //When
+        $this->get($donationListRoute);
+    }
+
+    public function testAuthenticatedUserCanViewDonationDetailPageForHisDonation()
+    {
+        //Given
+        $donation = Donation::factory()->create();
+        $user = $donation->user;
+
+        $donationPageRoute = route('donations.show', ['donation' => $donation->id]);
+
+        //When
+        $detailPageForDonation = $this->actingAs($user)->get($donationPageRoute);
+
+        //Then
+        $detailPageForDonation->assertOk();
+        $detailPageForDonation->assertViewIs('donations.donation-detail');
+    }
+
+    public function testAuthenticatedUserCannotViewAnotherUsersDonationDetailPage()
+    {
+        //Given
+        $donation = Donation::factory()->create();
+        $randomUser = User::factory()->create();
+
+        $donationPageRoute = route('donations.show', ['donation' => $donation->id]);
+
+        //Then
+        $this->expectException(AuthorizationException::class);
+
+        //When
+        $this->actingAs($randomUser)->get($donationPageRoute);
+    }
+
+    public function testUnauthenticatedUserCannotViewAnotherUsersDonationDetailPage()
+    {
+        //Given
+        $donation = Donation::factory()->create();
+
+        $donationPageRoute = route('donations.show', ['donation' => $donation->id]);
+
+        //Then
+        $this->expectException(AuthenticationException::class);
+
+        //When
+        $this->get($donationPageRoute);
     }
 }

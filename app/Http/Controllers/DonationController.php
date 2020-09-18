@@ -4,12 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Donation;
 use App\Models\Project;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class DonationController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->authorizeResource(Donation::class, 'donation');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +23,9 @@ class DonationController extends Controller
      */
     public function index()
     {
-        //
+        $donations = Donation::where('user_id', Auth::id())->get();
+
+        return view('donations.donation-list', compact('donations'));
     }
 
     /**
@@ -28,13 +36,10 @@ class DonationController extends Controller
      */
     public function create($projectId)
     {
-        if (Auth::check()) {
-            $project = Project::find($projectId);
+        $project = Project::find($projectId);
 
-            return view('donations.create-donation', compact('project'));
-        }
+        return view('donations.create-donation', compact('project'));
 
-        return redirect(route('projects.show', ['project' => $projectId]));
     }
 
     /**
@@ -46,21 +51,18 @@ class DonationController extends Controller
      */
     public function store(Request $request, $projectId)
     {
-        if (Auth::check()) {
-            $donation = new Donation();
-            $project = Project::find($projectId);
+        $donation = new Donation();
+        $project = Project::find($projectId);
 
-            $donation->amount = $request->input('amount');
-            $donation->project_id = $project->id;
-            $donation->user_id = Auth::id();
-            $donation->isValid = true;
+        $donation->amount = $request->input('amount');
+        $donation->project_id = $project->id;
+        $donation->user_id = Auth::id();
+        $donation->isValid = true;
 
-            $donation->save();
+        $donation->save();
 
-            return response()->view('donations.create-donation_recap', compact('project', 'donation'), 201);
-        }
+        return response()->view('donations.create-donation_recap', compact('project', 'donation'), 201);
 
-        return redirect(route('projects.show', ['project' => $projectId]));
     }
 
     /**
@@ -68,10 +70,13 @@ class DonationController extends Controller
      *
      * @param int $id
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show($id)
     {
-        //
+        $donation = Donation::find($id);
+
+        return view('donations.donation-detail', compact('donation'));
     }
 
     /**

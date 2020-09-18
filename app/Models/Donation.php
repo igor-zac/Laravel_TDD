@@ -9,6 +9,13 @@ class Donation extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'amount' => 'integer',
+        'user_id' => 'integer',
+        'project_id' => 'integer',
+        'isValid' => 'boolean',
+    ];
+
     public function user()
     {
         return $this->belongsTo('App\Models\User');
