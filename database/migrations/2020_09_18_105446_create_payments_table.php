@@ -17,8 +17,10 @@ class CreatePaymentsTable extends Migration
             $table->id();
             $table->integer('amount');
             $table->integer('donation_id');
+            $table->integer('user_id');
             $table->timestamps();
             $table->foreign('donation_id')->references('id')->on('donations');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

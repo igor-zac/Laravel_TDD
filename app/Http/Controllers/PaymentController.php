@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Gate;
 
 class PaymentController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * @param \Illuminate\Http\Request $request
      * @param Donation $donation
@@ -29,6 +34,7 @@ class PaymentController extends Controller
 
         $payment = Payment::create([
             'amount' => $request->input('amount'),
+            'user_id' => Auth::id(),
             'donation_id' => $donation->id
         ]);
 

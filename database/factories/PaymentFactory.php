@@ -31,6 +31,9 @@ class PaymentFactory extends Factory
                 $correspondingDonation->validated = ($amount === $correspondingDonation->amount) ? true : false ;
 
                 return $amount;
+            },
+            'user_id' => function (array $attributes) {
+                return Donation::find($attributes['donation_id'])->user->id;
             }
         ];
     }
